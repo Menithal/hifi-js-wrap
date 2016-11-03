@@ -85,6 +85,21 @@ new Entity(defaults).addEntity().setInteractionStart(hopper)
 
 Similarly, interactions can be bound to `setInteractionHold` and `setInteractionStop`
 
+Note that binding the interactions through this,
+    applies only to whom ever the script has run, if you want to do it for an entity script, use.
+
+```
+(function(){
+    var obj = new Entity()
+    var hopper = function(instance, event){
+      instance.filter(["velocity"])
+              .editProperties({velocity: {x:0,z:0,y:15}})
+              .updateEntity();
+    }
+    return obj
+  })
+```
+
 When setInteraction is called, both the Mouse
  AND hand controller interactions are bound to the object.
 

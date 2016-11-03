@@ -8,7 +8,16 @@ See LICENCE for License details.
 */
 
 function Entity(properties) {
-    if (typeof properties === "string") {
+    if (properties === null || properties === undefined) {
+      var self = this
+      this.preload = function(id){
+        self.id = id
+        self.sync()
+      }
+      this.callbacks = {}
+      this.properties = {}
+      this._filter = []
+    } else if (typeof properties === "string") {
         this.properties = Entities.getEntityProperties(id)
         if (this.properties && this.properties !== null && this.properties.length !== 0) {
             this.id = properties.id
@@ -62,21 +71,31 @@ Entity.prototype = {
         return this
     },
     editProperties: function(newProperties) {
-        for (var property in newProperties){ this.properties[property] = newProperties[property] }
+        for (var property in newProperties) {
+            this.properties[property] = newProperties[property]
+        }
         return this
     },
     callMethod: function(methodName, params) {
-        if (this.id !== null){ Entities.callEntityMethod(this.id, methodName, params) }
+        if (this.id !== null) {
+            Entities.callEntityMethod(this.id, methodName, params)
+        }
         return this
     },
     unbind: function(method) {
-        if (this.callbacks[method] !== null){ return this }
+        if (this.callbacks[method] !== null) {
+            return this
+        }
         Script.clearEventHandler(this.id, method, this.callbacks[method])
         return this
     },
     bind: function(method, callback, override) {
-        if (override === undefined){ override = true }
-        if (this.callbacks[method] !== null){ this.unbind(method, this.callbacks[method]) }
+        if (override === undefined) {
+            override = true
+        }
+        if (this.callbacks[method] !== null) {
+            this.unbind(method, this.callbacks[method])
+        }
         var s = this
         this.callbacks[method] = override ? function() {
             callback(s, this.arguments)
