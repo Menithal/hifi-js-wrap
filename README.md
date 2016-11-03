@@ -69,14 +69,17 @@ This binds both hand controllers AND mouse to a single callback.
 The event being an [MouseEvent](https://github.com/highfidelity/hifi/blob/master/libraries/script-engine/src/MouseEvent.h)
 Instance is the Wrapper Entity, that allows you to manipulate the object.
 
-For Example:
+For Example Creating multiple that hop on click.
 ```
-var hopper = new Entity({type:"Box", position:MyAvatar.position, name:"Hopper", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity();
-hopper.setInteractionStart(function(instance, event){
+var hopper = function(instance, event){
   instance.filter(["velocity"])
-          .editProperties({velocity: {x:0,z:0,y:5}})
+          .editProperties({velocity: {x:0,z:0,y:15}})
           .updateEntity();
-})
+}
+new Entity({type:"Box", position:MyAvatar.position, name:"Hopper", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
+new Entity({type:"Box", position:MyAvatar.position, name:"Hopper1", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
+new Entity({type:"Box", position:MyAvatar.position, name:"Hopper2", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
+new Entity({type:"Box", position:MyAvatar.position, name:"Hopper3", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
 ```
 
 Similarly, interactions can be bound to `setInteractionHold` and `setInteractionStop`
