@@ -43,11 +43,11 @@ function Entity(properties) {
 Entity.prototype = {
     properties: {},
     id: null,
-    filter: [],
+    _filter: [],
     filter: function(filter) {
         if(this.id !== null){ // Lets not destroy properties if this isnt even in the world yet!
-          this.filter = filter | []
-          return this.sync()
+          this._filter = filter
+          return this.sync(filter)
         }
         return this
     },
@@ -70,19 +70,22 @@ Entity.prototype = {
     },
     sync: function(filter) {
         if (this.id !== null) {
-            filter = filter | this.filter
+            filter = (filter === null || filter === undefined)? this._filter : filter
             var newProperties = Entities.getEntityProperties(this.id, filter)
-            if (newProperties !== null && newProperties.length > 0) {
+            print(JSON.stringify(newProperties.length))
+            if (newProperties.id !== undefined) {
                 this.properties = newProperties
             }else{
-              this.id = null
+              print("FCC")
+                this.id = null
             }
         }
-        this.filter = []
+        this._filter = []
         return this
     },
     getProperties: function(filters) { // Filtered properties update. We dont need to update everything always, so sometimes its good to define this.
-        filter = filter | this.filter // Because apparently I cant define this above!
+        filters = (filters === null || filters === undefined)? this._filter : filters
+
         if (filters.length === 0) return this.properties
         var filtered = {}
         for (var index in filters) {
