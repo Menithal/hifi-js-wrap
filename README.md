@@ -76,10 +76,11 @@ var hopper = function(instance, event){
           .editProperties({velocity: {x:0,z:0,y:15}})
           .updateEntity();
 }
-new Entity({type:"Box", position:MyAvatar.position, name:"Hopper", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
-new Entity({type:"Box", position:MyAvatar.position, name:"Hopper1", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
-new Entity({type:"Box", position:MyAvatar.position, name:"Hopper2", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
-new Entity({type:"Box", position:MyAvatar.position, name:"Hopper3", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}).addEntity().setInteractionStart(hopper)
+var defaults = {type:"Box", position:MyAvatar.position, name:"Hopper", color:{red:0,blue:0,green:255},dynamic: true, gravity: {x:0,y:-2,z:0}}
+new Entity(defaults).addEntity().setInteractionStart(hopper)
+new Entity(defaults).addEntity().setInteractionStart(hopper)
+new Entity(defaults).addEntity().setInteractionStart(hopper)
+new Entity(defaults).addEntity().setInteractionStart(hopper)
 ```
 
 Similarly, interactions can be bound to `setInteractionHold` and `setInteractionStop`
