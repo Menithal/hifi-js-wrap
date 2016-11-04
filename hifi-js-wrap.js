@@ -1,20 +1,7 @@
-/**
-Hifi JS Wrap Library Prototype (USE AT YOUR OWN RISK)
-Matti 'Menithal' Lahtinen on 3/11/16.
-Work in Progress
-
-Distributed under MIT License
-See LICENCE for License details.
-*/
-function Overlay(properties) {
-
-}
-
 function Entity(properties) {
-    if (properties === null || properties === undefined) {
+    if (properties === null || properties === undefined || typeof properties === "function") {
         var self = this
-        this.preload = function(id) {
-            print("PreloadingInternal")
+        this.preload = typeof properties === "function" ? properties : function(id) {
             self.id = id
         }
         this.callbacks = {}
@@ -63,7 +50,6 @@ Entity.prototype = {
         if (this.id !== null) {
             filter = (filter === null || filter === undefined) ? this._filter : filter
             var newProperties = Entities.getEntityProperties(this.id, filter)
-            print(JSON.stringify(newProperties.length))
             if (newProperties.id !== undefined) {
                 this.properties = newProperties
             } else {
