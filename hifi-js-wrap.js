@@ -6,17 +6,20 @@ Work in Progress
 Distributed under MIT License
 See LICENCE for License details.
 */
+function Overlay(properties) {
+
+}
 
 function Entity(properties) {
     if (properties === null || properties === undefined) {
-      var self = this
-      this.preload = function(id){
-        self.id = id
-        self.sync()
-      }
-      this.callbacks = {}
-      this.properties = {}
-      this._filter = []
+        var self = this
+        this.preload = function(id) {
+            print("PreloadingInternal")
+            self.id = id
+        }
+        this.callbacks = {}
+        this.properties = {}
+        this._filter = []
     } else if (typeof properties === "string") {
         this.properties = Entities.getEntityProperties(id)
         if (this.properties && this.properties !== null && this.properties.length !== 0) {
@@ -111,18 +114,27 @@ Entity.prototype = {
             .unbind("continueNearTrigger")
             .unbind("holdingClickOnEntity")
 
+        if (this.startNearTrigger) delete this.startNearTrigger
+        if (this.clickDownOnEntity) delete this.clickDownOnEntity
         return this
     },
     setInteractionStart: function(call) { // Creates Wraps mouse clicks and Trigger calls together.
         var s = this
-        this.bind("startNearTrigger", function() {
-                call(s, {
-                    button: "hand"
-                })
-            }, false)
-            .bind("clickDownOnEntity", function(i, m) {
-                call(s, m)
-            }, false)
+        var startNearTrigger = function() {
+            call(s, {
+                button: "hand"
+            })
+        }
+        var clickDownOnEntity = function(i, m) {
+            call(s, m)
+        }
+        if (this.id === null) {
+            this.clickDownOnEntity = clickDownOnEntity
+            this.startNearTrigger = startNearTrigger
+        } else {
+            this.bind("startNearTrigger", startNearTrigger, false)
+                .bind("clickDownOnEntity", clickDownOnEntity, false)
+        }
         return this
     },
     setInteractionHold: function(call) { // Creates Wraps mouse clicks and Trigger calls together.
