@@ -110,3 +110,6 @@ e.clearInteractions()
 ```
 
 # Advanced Entity Interaction
+
+
+See Examples for different use examples.
