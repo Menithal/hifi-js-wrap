@@ -7,7 +7,7 @@ See LICENCE for License details.
 */
 
 if (Entity === undefined) {
-    function Entity(properties) {
+    Entity = function(properties) {
         if (properties === null || properties === undefined || typeof properties === "function") {
             var self = this
             this.preload = typeof properties === "function" ? properties : function(id) {
@@ -70,7 +70,6 @@ if (Entity === undefined) {
         },
         editProperties: function(newProperties) {
             for (var property in newProperties) {
-                print(property)
                 this.properties[property] = newProperties[property]
             }
             return this
@@ -195,5 +194,4 @@ if (Entity === undefined) {
             return filtered
         }
     }
-
 }
