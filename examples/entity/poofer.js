@@ -1,15 +1,13 @@
 /**
-Hifi JS Wrap Library Prototype (USE AT YOUR OWN RISK)
-Matti 'Menithal' Lahtinen on 3/11/16.
-Work in Progress
+Example of an Script that uses the Entity library to rez an object.
+Making is Rain.
 
-Distributed under MIT License
-See LICENCE for License details.
+Distributed under MIT. see License.
+
 */
 
 (function() {
   Script.include("../hifi-js-wrap.min.js?"+Math.random())
-  print("Delay.")
   var Entity
   var randVec = function(amount) { return { x: Math.random() * amount - Math.random() * amount, y: Math.random() * amount - Math.random() * amount, z: Math.random() * amount - Math.random() * amount } }
   var randScaleVec = function(min, amount) {
@@ -25,16 +23,18 @@ See LICENCE for License details.
         var amount = 100
         for (var i = 0; i < amount; i++) {
           var color = randColor()
-          var dimen = {x: 0.156, z: 0.0663, y:0.005}
+          var dimen = {x: 0.1560, y: 0.005, z:0.0663}
           var vec = randVec(5)
           vec.y = Math.abs(vec.y) + Math.random() * 3
             new Entity({
-                type: "Box",
+                type: "Model",
                 position: Vec3.sum(instance.properties.position, randVec(2)),
                 velocity: vec,
-                name: "CubeToDelete" + Math.random() * 10000,
+                modelURL: "http://www.norteclabs.com/HF/scripts/examples/entity/dollars.fbx",
+                name: "Dollars" + Math.random() * 10000,
                 color: color,
                 friction: 0.05,
+                shapeType: 'Box',
                 density: 100,
                 angularVelocity: randVec(90),
                 angularFriction: 0.05,
