@@ -9,12 +9,15 @@ Distributed under MIT. see License.
 (function() {
   Script.include("../hifi-js-wrap.min.js?"+Math.random())
   var Entity
+
+  // Define some randomization Functions.
   var randVec = function(amount) { return { x: Math.random() * amount - Math.random() * amount, y: Math.random() * amount - Math.random() * amount, z: Math.random() * amount - Math.random() * amount } }
   var randScaleVec = function(min, amount) {
     var size = Math.random() * amount
     size = size < min? min: size
     return { x:size,  y: size, z: size } }
   var randColor = function() { return { red: Math.random() * 255, green: Math.random() * 255, blue: Math.random() * 255  } };
+
   var lastClick = new Date()
   // On interaction / on click / on touch start spawn whole bunch of spheres and change random.
   var cl = function(instance, event) {

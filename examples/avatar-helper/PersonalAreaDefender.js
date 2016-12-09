@@ -28,6 +28,7 @@ var Entity;
         var shield = new Entity({
             type: "Sphere",
             lifetime: 6,
+
             name: "Shield" + Math.random(),
             collidesWith: "static,dynamic,kinematic,otherAvatar,",
             owningAvatarID: MyAvatar.sessionUUID,
@@ -51,12 +52,12 @@ var Entity;
                 z: 100 * dt,
                 y: 100 * dt
             });
-            if (size.x < 5) {
+            if (size.x < 4) {
                 shield.sync(['dimensions']).editProperties({
                     dimensions: size
                 }).updateEntity(); // Edit and update the objects dimensions only.
             }
-            if (timer > 4) { // After 500 ms delete self.
+            if (timer > 2) { // After 500 ms delete self.
                 Script.update.disconnect(growShield);
                 shield.deleteEntity();
             }
