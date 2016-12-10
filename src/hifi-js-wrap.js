@@ -22,24 +22,13 @@ Overlay = function(properties) {
     this.properties.solid = this.properties.solid ? true: false;
   }
 
-  /*
-  lays.addOverlay("line3d", {
-                      start: { x: 0, y: 0, z:0 },
-                      end: { x: 10, y: 10, z:10 },
-                      color: { red: 0, green: 255, blue: 255},
-                      alpha: 1,
-                      lineWidth: 5
-  */
-
   this.callbacks = {};
   this._filter = [];
   var self = this;
   this.scriptEnding = function () {
     self.deleteOverlay();
-    print("script ending");
     Script.scriptEnding.disconnect(self.scriptEnding);
   };
-  print("Overlay setup.");
   /* UI that ends, should just remove the overlays */
   Script.scriptEnding.connect(self.scriptEnding);
 };
@@ -74,9 +63,7 @@ Overlay.prototype = {
     try {
       if (this.id !== -1) Overlays.editOverlay(this.id, this.properties);
     } catch (e) {
-      print("OWr2ap: Overlay does not exist in world." );
-      print(JSON.stringify(e));
-      print("error above")
+      print("OWrap: Overlay does not exist in world." );
     }
     return this;
   },
@@ -98,7 +85,7 @@ Entity = function(properties) {
     this.properties = {};
     this._filter = [];
   } else if (typeof properties === "string") {
-    this.properties = Entities.getEntityProperties(id);
+    this.properties = Entities.getEntityProperties(properties);
     if (this.properties && this.properties !== null && this.properties.length !== 0) {
       this.id = properties.id;
     } else {

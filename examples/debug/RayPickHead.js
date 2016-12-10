@@ -10,18 +10,22 @@ var Overlay;
     var headOrientation = MyAvatar.headOrientation;
     var headFwd = Quat.getFront(headOrientation);
 
-    var ray = {origin: eyes, direction: headFwd};
-    var trace = Entities.findRayIntersection(ray, true);
-    var blacklist = [];
-    while(trace.intersects && trace.properties.collisionless) {
-      blacklist.push(trace.entityID);
-      trace = Entities.findRayIntersection(ray, true, [], blacklist);
+    function rayCollidable(origin, direction){
+      var ray = {origin: origin, direction: direction};
+      var trace = Entities.findRayIntersection(ray, true);
+      var blacklist = [];
+      while(trace.intersects && trace.properties.collisionless) {
+        blacklist.push(trace.entityID);
+        trace = Entities.findRayIntersection(ray, true, [], blacklist);
+      }
+      return trace;
     }
+
+    var trace = rayCollidable(eyes, headFwd);
 
     if (trace.intersects) {
       line.editProperties({alpha: 1, start: eyes, end: trace.intersection});
       target.editProperties({alpha: 1,position: trace.intersection});
-      print(JSON.stringify(trace));
     } else {
       line.editProperties({alpha:0, start: Vec3.ZERO, end: Vec3.ZERO});
       target.editProperties({alpha:0});
