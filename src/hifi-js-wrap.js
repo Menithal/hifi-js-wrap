@@ -6,97 +6,105 @@ Distributed under MIT License
 See LICENCE for License details.
 */
 Overlay = function(properties) {
-  this.properties = properties ? properties: {};
-  // Just setting the same default values
-  this.properties.scale = this.properties.scale ? this.properties.scale: {x:1,y:1,z:1};
-  this.properties.position = this.properties.position ? this.properties.position: MyAvatar.position;
-  this.properties.rotation = this.properties.rotation ? this.properties.rotation: Quat.ZERO;
-  this.properties.color = this.properties.color ? this.properties.color: {red:255,green:255,blue:255};
-  this.properties.alpha = this.properties.alpha ? this.properties.alpha: 1.0;
-  this.type = this.properties.type ? this.properties.type : "cube";
-  if (this.properties.type === "line3d" ) {
-    this.properties.start = this.properties.start ? this.properties.start : Vec3.ZERO;
-    this.properties.end = this.properties.end ? this.properties.end :  Vec3.ZERO;
-    this.properties.glow = this.properties.glow ? this.properties.glow : 0.0;
-  }else {
-    this.properties.solid = this.properties.solid ? true: false;
-  }
+    this.properties = properties ? properties : {};
+    // Just setting the same default values
+    this.properties.scale = this.properties.scale ? this.properties.scale : {
+        x: 1,
+        y: 1,
+        z: 1
+    };
+    this.properties.position = this.properties.position ? this.properties.position : MyAvatar.position;
+    this.properties.rotation = this.properties.rotation ? this.properties.rotation : Quat.ZERO;
+    this.properties.color = this.properties.color ? this.properties.color : {
+        red: 255,
+        green: 255,
+        blue: 255
+    };
+    this.properties.alpha = this.properties.alpha ? this.properties.alpha : 1.0;
+    this.type = this.properties.type ? this.properties.type : "cube";
+    if (this.properties.type === "line3d") {
+        this.properties.start = this.properties.start ? this.properties.start : Vec3.ZERO;
+        this.properties.end = this.properties.end ? this.properties.end : Vec3.ZERO;
+        this.properties.glow = this.properties.glow ? this.properties.glow : 0.0;
+    } else {
+        this.properties.solid = this.properties.solid ? true : false;
+    }
 
-  this.callbacks = {};
-  this._filter = [];
-  var self = this;
-  this.scriptEnding = function () {
-    self.deleteOverlay();
-    Script.scriptEnding.disconnect(self.scriptEnding);
-  };
-  /* UI that ends, should just remove the overlays */
-  Script.scriptEnding.connect(self.scriptEnding);
+    this.callbacks = {};
+    this._filter = [];
+    var self = this;
+    this.scriptEnding = function() {
+        self.deleteOverlay();
+        Script.scriptEnding.disconnect(self.scriptEnding);
+    };
+    /* UI that ends, should just remove the overlays */
+    Script.scriptEnding.connect(self.scriptEnding);
 };
 Overlay.prototype = {
-  properties: null,
-  id: -1,
-  _filter: null,
-  callbacks: null,
-  filter: function(filter) {
-    if (this.id !== -1) { /* Lets not destroy properties if this isnt even in the world yet! */
-      this._filter = filter
-      return this.sync(filter)
+    properties: null,
+    id: -1,
+    _filter: null,
+    callbacks: null,
+    filter: function(filter) {
+        if (this.id !== -1) { /* Lets not destroy properties if this isnt even in the world yet! */
+            this._filter = filter
+            return this.sync(filter)
+        }
+        return this
+    },
+    addOverlay: function() {
+        if (this.id === -1) {
+            this.id = Overlays.addOverlay(this.type, this.properties);
+        }
+        return this;
+    },
+    deleteOverlay: function() {
+        try {
+            if (this.id !== -1) Overlays.deleteOverlay(this.id);
+        } catch (e) {
+            print("Overlay does no longer exist.");
+        }
+        this.id = -1;
+        return this;
+    },
+    updateOverlay: function() {
+        try {
+            if (this.id !== -1) Overlays.editOverlay(this.id, this.properties);
+        } catch (e) {
+            print("OWrap: Overlay does not exist in world.");
+        }
+        return this;
+    },
+    editProperties: function(newProperties) {
+        for (var property in newProperties) {
+            this.properties[property] = newProperties[property];
+        }
+        return this;
     }
-    return this
-  },
-  addOverlay: function() {
-    if (this.id === -1){
-      this.id = Overlays.addOverlay(this.type, this.properties);
-    }
-    return this;
-  },
-  deleteOverlay: function() {
-    try {
-      if (this.id !== -1) Overlays.deleteOverlay(this.id);
-    } catch (e) {
-      print("Overlay does no longer exist.");
-    }
-    this.id = -1;
-    return this;
-  },
-  updateOverlay: function() {
-    try {
-      if (this.id !== -1) Overlays.editOverlay(this.id, this.properties);
-    } catch (e) {
-      print("OWrap: Overlay does not exist in world." );
-    }
-    return this;
-  },
-  editProperties: function(newProperties) {
-    for (var property in newProperties) {
-      this.properties[property] = newProperties[property];
-    }
-    return this;
-  }
 };
 
 Entity = function(properties) {
-  if (properties === null || properties === undefined || typeof properties === "function") {
-    var self = this;
-    this.preload = typeof properties === "function" ? properties : function(id) {
-      self.id = id;
+    if (properties === null || properties === undefined || typeof properties === "function") {
+        var self = this;
+        this.preload = typeof properties === "function" ? properties : function(id) {
+            self.id = id;
+        }
+        this.callbacks = {};
+        this.properties = {};
+        this._filter = [];
+    } else if (typeof properties === "string") {
+        this.properties = Entities.getEntityProperties(properties);
+        if (this.properties && this.properties !== null && this.properties.length !== 0) {
+            this.id = properties.id;
+        } else {
+            this.id = null;
+            this.properties = {};
+        }
+    } else {
+        this.properties = properties;
     }
     this.callbacks = {};
-    this.properties = {};
     this._filter = [];
-  } else if (typeof properties === "string") {
-    this.properties = Entities.getEntityProperties(properties);
-    if (this.properties && this.properties !== null && this.properties.length !== 0) {
-      this.id = properties.id;
-    } else {
-      this.id = null;
-      this.properties = {};
-    }
-  } else {
-    this.properties = properties;
-  }
-  this.callbacks = {};
-  this._filter = [];
 };
 
 Entity.prototype = {
@@ -150,10 +158,11 @@ Entity.prototype = {
         return this;
     },
     unbind: function(method) {
-        if (this.callbacks[method] !== null) {
+        if (this.callbacks[method] === null) {
             return this;
         }
         Script.clearEventHandler(this.id, method, this.callbacks[method]);
+        delete this.callbacks[method];
         return this;
     },
     bind: function(method, callback, override) {
@@ -177,15 +186,54 @@ Entity.prototype = {
             .unbind("holdingClickOnEntity")
             .unbind("continueFarTrigger")
             .unbind("holdingClickOnEntity");
-
-        if (this.startFarTrigger) delete this.startFarTrigger;
-        if (this.clickDownOnEntity) delete this.clickDownOnEntity;
-        if (this.continueFarTrigger) delete this.continueFarTrigger;
-        if (this.holdingClickOnEntity) delete this.holdingClickOnEntity;
-        if (this.continueFarTrigger) delete this.continueFarTrigger;
-        if (this.holdingClickOnEntity) delete this.holdingClickOnEntity;
-
         return this;
+    },
+    clearEquip: function() {
+        this.unbind("onEquip")
+            .unbind("startEquip")
+            .unbind("continueEquip")
+        return this;
+    },
+    setOnEquip: function(call) {
+        var s = this;
+        var startEquip = function(id, arg) {
+            var controller = arg[0] === "left" ? Controller.Standard.LT : Controller.Standard.RT;
+            call(s, controller, arg);
+        };
+        if (this.id === null) {
+            this.startEquip = startEquip;
+        } else {
+            this.bind("onEquip", startEquip, false);
+        }
+        return s;
+    },
+    setOnEquipTrigger: function(call) {
+        var s = this;
+        var continueEquip = function(id, arg) {
+            var controller = arg[0] === "left" ? Controller.Standard.LT : Controller.Standard.RT
+            var triggerValue = Controller.getValue(controller);
+            call(s, controller, triggerValue, arg);
+        }
+        if (this.id === null) {
+            this.continueEquip = continueEquip;
+        } else {
+            this.bind("continueEquip", continueEquip, false);
+        }
+        return s;
+    },
+    setOnUnequip: function(call) {
+        var s = this;
+        var releaseEquip = function(id, arg) {
+            var controller = arg[0] === "left" ? Controller.Standard.LT : Controller.Standard.RT
+            var triggerValue = Controller.getValue(controller);
+            call(s, controller, triggerValue, arg);
+        }
+        if (this.id === null) {
+            this.releaseEquip = releaseEquip;
+        } else {
+            this.bind("releaseEquip", releaseEquip, false);
+        }
+        return s;
     },
     setInteractionStart: function(call) { /* Creates Wraps mouse clicks and Trigger calls together. */
         var s = this;
@@ -257,12 +305,10 @@ Entity.prototype = {
         if (filters.length === 0) return this.properties;
 
         var filtered = {};
-        filters.forEach(function(item){
-          filtered.push(this.properties[filters[index]]);
+        filters.forEach(function(item) {
+            filtered.push(this.properties[filters[index]]);
         });
 
         return filtered;
     }
 }
-
-//var o = new Overlay({type: "cube", position: MyAvatar.position, scale: {x:1,y:1,z:1}}); o.addOverlay(); var p = o.properties; p.position = Vec3.sum(p.position, {x:0,z:0, y:1}); o.editProperties(p).updateOverlay();
