@@ -85,10 +85,10 @@
       }
   };
 
-  Entity = function(properties) {
-      if (properties === null || properties === undefined || typeof properties === "function") {
+  Entity = function(arg) {
+      if (arg === null || arg === undefined || typeof arg === "function") {
           var self = this;
-          this.preload = typeof properties === "function" ? properties : function(id) {
+          this.preload = typeof arg === "function" ? arg : function(id) {
               self.id = id;
               Object.keys(self.callbacks).forEach(function (item) {
                 self[item] = self.callbacks[item];
@@ -98,16 +98,16 @@
           this.callbacks = {};
           this.properties = {};
           this._filter = [];
-      } else if (typeof properties === "string") {
-          this.properties = Entities.getEntityProperties(properties);
+      } else if (typeof arg === "string") {
+          this.properties = Entities.getEntityProperties(arg);
           if (this.properties && this.properties !== null && this.properties.length !== 0) {
-              this.id = properties;
+              this.id = arg;
           } else {
               this.id = null;
               this.properties = {};
           }
       } else {
-          this.properties = properties;
+          this.properties = arg;
       }
       this.callbacks = {};
       this._filter = [];
@@ -127,6 +127,10 @@
               this._filter = filter;
               return this.sync(filter);
           }
+          return this;
+      },
+      addLocalEntity: function() {
+          if (this.id === null && this.id !== undefined) this.id = Entities.addEntity(this.properties, true);
           return this;
       },
       addEntity: function() {
@@ -155,9 +159,16 @@
           this._filter = [];
           return this;
       },
+      getJSONUserData: function(){
+        return this.properties.userData.length > 0 ? JSON.parse(this.properties.userData) : {};
+      },
       editProperties: function(newProperties) {
           for (var property in newProperties) {
-              this.properties[property] = newProperties[property];
+              if(property === "userData" && (newProperties[property].constructor !== "".constructor)) {
+                this.properties[property] = JSON.stringify(newProperties[property]);
+              } else {
+                this.properties[property] = newProperties[property];
+              }
           }
           return this;
       },
@@ -303,6 +314,14 @@
                   .bind("clickReleaseOnEntity", clickReleaseOnEntity, false);
           }
           return this;
+      },
+      frameUpdate: function(properties) {
+        try {
+            if (this.id !== null) Entities.editEntity(this.id, properties);
+        } catch (e) {
+            print("EWrap: Entity does not exist in world.");
+        }
+        return this;
       },
       updateEntity: function() {
           try {
