@@ -6,10 +6,17 @@
   Distributed under MIT License
   See LICENCE for License details.
   */
-  var Entity;
+
+  // Entities can have Overlays as Children, and Overlays can be children of Overlays.
+  // TODO: Improve Both Entities and Overlays to allow for Child Management
+  // TODO: Allow for Propagation (visibility, especially)
+  // TODO: Update To Use node for Compiling
+  // TODO: Allow compiling to minify and
+
   Overlay = function(properties) {
       this.properties = properties ? properties : {};
       // Just setting the same default values
+      this.children = [];
       this.properties.scale = this.properties.scale ? this.properties.scale : {
           x: 1,
           y: 1,
@@ -45,6 +52,7 @@
   Overlay.prototype = {
       properties: null,
       id: -1,
+      children: [],
       _filter: null,
       callbacks: null,
       filter: function(filter) {
@@ -60,8 +68,37 @@
           }
           return this;
       },
+      addChild: function (obj) {
+        if(obj instanceof Overlay /* || obj instanceof Entity */) {
+          this.children.push(obj)
+        } else if (!obj instanceof Entity && obj instanceof Object) {
+          var n = new Overlay(obj);
+          this.children.push(n)
+        }  else {
+          throw "Couldn't add a child Overlay";
+        }
+
+        return this;
+      },
+      deleteChild: function(index){
+        if(this.children[index] != null){
+          var deleted = this.children.splice(index, 1);
+          deleted[0].deleteOverlay();
+          this.children.deleteOverlay();
+        }
+        return this;
+      },
+      deleteChildren: function () {
+        this.children.forEach(function (item) {
+          item.deleteOverlay();
+        });
+        this.children = [];
+        return this;
+      },
       deleteOverlay: function() {
           try {
+              if(this.children.length > 0) this.children.forEach(function(item) {item.deleteOverlay();});
+
               if (this.id !== -1) Overlays.deleteOverlay(this.id);
           } catch (e) {
               print("Overlay does no longer exist.");
@@ -110,12 +147,14 @@
           this.properties = arg;
       }
       this.callbacks = {};
+      this.children = [];
       this._filter = [];
   };
 
   Entity.prototype = {
       properties: null,
       id: null,
+      children: [],
       _filter: null,
       callbacks: null,
       setPreload: function(preload) {
@@ -139,6 +178,7 @@
       },
       deleteEntity: function() {
           try {
+              this.deleteChildren();
               if (this.id !== null && this.id !== undefined) Entities.deleteEntity(this.id);
           } catch (e) {
               print("Entity does no longer exist.");
@@ -321,6 +361,41 @@
         } catch (e) {
             print("EWrap: Entity does not exist in world.");
         }
+        return this;
+      },
+      addChild: function (obj) {
+        if(obj instanceof Overlay || obj instanceof Entity) {
+          if (this.id !== null) {
+            obj.properties.parentID = this.id;
+          }
+
+          this.children.push(obj)
+          return obj;
+        } else if (!obj instanceof Entity && !obj instanceof Overlay && obj instanceof Object) {
+          if (this.id !== null) {
+            obj.parentID = this.id;
+          }
+          var n = new Entity(obj);
+          this.children.push(n)
+          return n;
+        }  else {
+          throw "Couldn't add a child Overlay";
+        }
+        return this;
+      },
+      deleteChild: function(index){
+        if(this.children[index] != null){
+          if(this.children[index])
+          this.children.deleteOverlay();
+          this.children.splice(index, 1);
+        }
+        return this;
+      },
+      deleteChildren: function () {
+        this.children.forEach(function (item) {
+          item.deleteOverlay();
+        });
+        this.children = [];
         return this;
       },
       updateEntity: function() {
