@@ -7,7 +7,7 @@
     "example": "examples"
   },
   "scripts": {
-    "build": "node build/index",
+    "build": "node build/index dev",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,14 +23,15 @@
   "devDependencies": {
     "babel-core": "^6.23.1",
     "babel-eslint": "^7.1.1",
-    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-minify": "^0.1.12",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.1.8",
+    "babili": "0.0.11",
     "eslint": "^3.16.0",
-    "ora": "^1.1.0"
+    "ora": "^1.1.0",
+    "webpack": "^2.2.1"
   },
   "dependencies": {
-    "babel-polyfill": "^6.23.0",
-    "transform-runtime": "0.0.0"
+    "babel-polyfill": "^6.23.0"
   }
 }
