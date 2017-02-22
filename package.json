@@ -1,0 +1,36 @@
+{
+  "name": "hifi-js-wrap",
+  "version": "1.0.0",
+  "description": "For [High Fidelity Metaverse's](https://highfidelity.io) JS-Scripting Language to work alike to JS OOP.",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "scripts": {
+    "build": "node build/index",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MattiLahtinen/hifi-js-wrap.git"
+  },
+  "author": "Matti Lahtinen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/MattiLahtinen/hifi-js-wrap/issues"
+  },
+  "homepage": "https://github.com/MattiLahtinen/hifi-js-wrap#readme",
+  "devDependencies": {
+    "babel-core": "^6.23.1",
+    "babel-eslint": "^7.1.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.1.8",
+    "eslint": "^3.16.0",
+    "ora": "^1.1.0"
+  },
+  "dependencies": {
+    "babel-polyfill": "^6.23.0",
+    "transform-runtime": "0.0.0"
+  }
+}

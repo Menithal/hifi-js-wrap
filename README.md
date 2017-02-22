@@ -2,6 +2,14 @@
 For [High Fidelity Metaverse's](https://highfidelity.io) JS-Scripting Language
 to work alike to JS OOP.
 
+Compiled into High Fidelity Compat JS using Babel and NodeJS.
+
+To Build the library from Source
+
+```
+npm run build
+```
+
 ## Note that this is still work in progress.
 
 Allows for JS Chain notation over the Default High Fidelity settings.
