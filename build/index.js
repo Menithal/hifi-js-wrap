@@ -17,7 +17,7 @@ mkdir('-p', config.distPath);
 // babili
 require("babel-core").transformFile(path.join(config.sourceRoot, "wrap.js"),
 {
-  presets: ["env"]
+  presets: ["env", "babili"]
 },
   (err, result) => {
     spinner.stop();
