@@ -68,10 +68,10 @@ class HifiObject {
     }
   }
   getParent() {
-    return this.parent;
+    return this.parent
   }
   getChildren() {
-    return this.children;
+    return this.children
   }
   clearParent() {
     if (this.parent === null) {
