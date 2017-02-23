@@ -1,7 +1,7 @@
 class World {
   constructor() {
-    
+
   }
 }
 
-module.exports = World;
+module.exports = new World();
