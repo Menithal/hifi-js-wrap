@@ -22,30 +22,39 @@ function deepUpsert(properties, newValues) {
 /*
   High Fidelity js
   Has no console object, but to keep this more js like, going write like such
+  this override will only occur
 */
-console = {}
-stringify = (str) => {
-  if (typeof str[0] === 'string') {
-    if (str.length > 1) {
-      return str[0] + stringify(str.filter((v,i)=> i > 0))
+if(!console) {
+  var print = print ? print : function(){};
+  console = {}
+  stringify = (str) => {
+    if (typeof str[0] === 'string') {
+      if (str.length > 1) {
+        return str[0] + stringify(str.filter((v,i)=> i > 0))
+      }
+      return [0]
+    } else  if (str instanceof Object) {
+      var build = "{"
+      Object.keys(str).forEach((index) => {
+        build+= `${index}:${str[index]},`
+      })
+      build += "}"
+      return str
     }
-    return [0]
-  } else  if (str instanceof Object) {
-    return JSON.stringify(str)
+    return str
   }
-  return str
-}
-console.debug = () => {
-  print(`js-wrap-debug: ${stringify(str)}`)
-}
-console.log = () => {
-  print(`js-wrap-log: ${stringify(str)}`)
-}
-console.warn = () => {
-  print(`js-wrap-warn: ${stringify(str)}`)
-}
-console.error = () => {
-  print(`js-wrap-error: ${stringify(str)}`)
+  console.debug = () => {
+    print(`js-wrap-debug: ${stringify(arguments)}`)
+  }
+  console.log = () => {
+    print(`js-wrap-log: ${stringify(arguments)}`)
+  }
+  console.warn = () => {
+    print(`js-wrap-warn: ${stringify(arguments)}`)
+  }
+  console.error = () => {
+    print(`js-wrap-error: ${stringify(arguments)}`)
+  }
 }
 /*
   Overlay
@@ -431,4 +440,6 @@ class Entity extends HifiObject {
     return filtered
   }
 }
+
+module.exports = {Entity, Overlay};
 /* */
