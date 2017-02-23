@@ -14,8 +14,11 @@ var spinner = ora('Prepearing');
 spinner.start();
 rm('-rf', config.distPath);
 mkdir('-p', config.distPath);
-
-require("babel-core").transformFile(path.join(config.sourceRoot, "wrap.js"), { presets: ["env"]},
+// babili
+require("babel-core").transformFile(path.join(config.sourceRoot, "wrap.js"),
+{
+  presets: ["env"]
+},
   (err, result) => {
     spinner.stop();
     if (err) {
