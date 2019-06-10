@@ -11,6 +11,7 @@ In Laymans, This means that you can create and control an entity using just a JS
 # Entity Manipulation
 
 ```
+var Entity = Script.require("scripts/Entity.js");
 var e = new Entity("uuid")
 ```
 Would bind a High Fidelity Entity into the JS variable `e`.
@@ -71,6 +72,7 @@ Instance is the Wrapper Entity, that allows you to manipulate the object.
 
 For Example Creating multiple that hop on click.
 ```
+var Entity = Script.require("scripts/Entity.js");
 var hopper = function(instance, event){
   instance.filter(["velocity"])
           .editProperties({velocity: {x:0,z:0,y:15}})
