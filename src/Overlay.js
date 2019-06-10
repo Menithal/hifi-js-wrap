@@ -1,5 +1,5 @@
 
-  Overlay = function(properties) {
+Overlay = function (properties) {
     this.properties = properties ? properties : {};
     // Just setting the same default values
     this.properties.scale = this.properties.scale ? this.properties.scale : {
@@ -27,7 +27,7 @@
     this.callbacks = {};
     this._filter = [];
     var self = this;
-    this.scriptEnding = function() {
+    this.scriptEnding = function () {
         self.deleteOverlay();
         Script.scriptEnding.disconnect(self.scriptEnding);
     };
@@ -39,20 +39,20 @@ Overlay.prototype = {
     id: -1,
     _filter: null,
     callbacks: null,
-    filter: function(filter) {
+    filter: function (filter) {
         if (this.id !== -1) { /* Lets not destroy properties if this isnt even in the world yet! */
             this._filter = filter
             return this.sync(filter)
         }
-        return this
+        return this;
     },
-    addOverlay: function() {
+    addOverlay: function () {
         if (this.id === -1) {
             this.id = Overlays.addOverlay(this.type, this.properties);
         }
         return this;
     },
-    deleteOverlay: function() {
+    deleteOverlay: function () {
         try {
             if (this.id !== -1) Overlays.deleteOverlay(this.id);
         } catch (e) {
@@ -61,7 +61,7 @@ Overlay.prototype = {
         this.id = -1;
         return this;
     },
-    updateOverlay: function() {
+    updateOverlay: function () {
         try {
             if (this.id !== -1) Overlays.editOverlay(this.id, this.properties);
         } catch (e) {
@@ -69,7 +69,7 @@ Overlay.prototype = {
         }
         return this;
     },
-    editProperties: function(newProperties) {
+    editProperties: function (newProperties) {
         for (var property in newProperties) {
             this.properties[property] = newProperties[property];
         }
